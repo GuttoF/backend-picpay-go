@@ -1,6 +1,6 @@
 services:
   app:
-    image: golang:1.23.2-bullseye
+    image: golang:1.23.4-bullseye
     container_name: go-api
     ports:
       - "3000:3000"
@@ -16,7 +16,7 @@ services:
       '
 
   db:
-    image: postgres:17.0
+    image: postgres:17.2
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
