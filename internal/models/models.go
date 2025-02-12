@@ -31,8 +31,8 @@ type Transaction struct {
 
 type Notification struct {
 	ID				uint		`gorm:"primaryKey"`
-	UserID			string		`gorm:"not null"`
-	TransactionID	string		`gorm:"not null"`
+	UserID			uint		`gorm:"not null"`
+	TransactionID	uint		`gorm:"not null"`
 	Message			string		`gorm:"not null"`
 	Status			string		`gorm:"not null"`
 	CreatedAt		time.Time	`gorm:"default:CURRENT_TIMESTAMP"`
