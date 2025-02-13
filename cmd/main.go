@@ -1,10 +1,12 @@
 package main
 
 import (
+	"log"
+	"os"
+	"backend-picpay/internal/handlers"
 	"backend-picpay/internal/models"
 	"backend-picpay/internal/utils"
-	"backend-picpay/internal/handlers"
-	"log"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -26,5 +28,10 @@ func main() {
 	app.Post("/users", handlers.CreateUser)
 	app.Post("/transactions", handlers.Transfer)
 
-	log.Fatal(app.Listen(":3000"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000" 
+	}
+	log.Printf("Server is running on port %s", port)
+	log.Fatal(app.Listen(":" + port))
 }
