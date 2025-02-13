@@ -1,5 +1,7 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
     document VARCHAR(14) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -9,24 +11,24 @@ CREATE TABLE users (
 );
 
 CREATE TABLE wallets (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     balance DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE transactions (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     value DECIMAL(10, 2) NOT NULL,
-    payer_id INT REFERENCES users(id),
-    payee_id INT REFERENCES users(id),
+    payer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    payee_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE notifications (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id),
-    transaction_id INT REFERENCES transactions(id),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    transaction_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     message TEXT NOT NULL,
     status VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
