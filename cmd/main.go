@@ -3,8 +3,9 @@ package main
 import (
 	"backend-picpay/internal/models"
 	"backend-picpay/internal/utils"
-
+	"backend-picpay/internal/handlers"
 	"log"
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
@@ -19,4 +20,11 @@ func main() {
 	}
 
 	log.Println("Database migration completed succesfully")
+
+	app := fiber.New()
+
+	app.Post("/users", handlers.CreateUser)
+	app.Post("/transactions", handlers.Transfer)
+
+	log.Fatal(app.Listen(":3000"))
 }

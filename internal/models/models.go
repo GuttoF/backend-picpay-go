@@ -25,7 +25,7 @@ type Wallet struct {
 type Transaction struct {
 	ID			uuid.UUID		`gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
 	Value		float64			`gorm:"not null"`
-	PayeerID	uuid.UUID		`gorm:"type:uuid;not null"`
+	PayerID		uuid.UUID		`gorm:"type:uuid;not null"`
 	PayeeID		uuid.UUID		`gorm:"type:uuid;not null"`
 	CreatedAt	time.Time		`gorm:"default:CURRENT_TIMESTAMP"`
 }
