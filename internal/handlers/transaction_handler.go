@@ -15,7 +15,7 @@ import (
 // @Param transaction body models.Transaction true "Transaction details"
 // @Success 201 {object} models.Transaction
 // @Failure 400 {object} models.ErrorResponse "Invalid input or transfer error"
-// @Router /transaction [post]
+// @Router /transactions [post]
 func Transfer(c *fiber.Ctx) error {
 	var transaction models.Transaction
 

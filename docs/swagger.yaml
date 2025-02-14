@@ -1,4 +1,14 @@
 definitions:
+  models.BalanceRequest:
+    properties:
+      amount:
+        type: number
+      wallet_id:
+        type: string
+    required:
+    - amount
+    - wallet_id
+    type: object
   models.ErrorResponse:
     properties:
       error:
@@ -34,10 +44,21 @@ definitions:
       userType:
         type: string
     type: object
+  models.Wallet:
+    properties:
+      balance:
+        type: number
+      createdAt:
+        type: string
+      id:
+        type: string
+      userID:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
-  /transaction:
+  /transactions:
     post:
       consumes:
       - application/json
@@ -89,4 +110,108 @@ paths:
       summary: Create a new user
       tags:
       - users
+  /wallets:
+    post:
+      consumes:
+      - application/json
+      description: Create a new wallet for a user
+      parameters:
+      - description: User ID (UUID format)
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Wallet'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Create a new wallet
+      tags:
+      - wallets
+  /wallets/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a wallet by user ID
+      parameters:
+      - description: User ID (UUID format)
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Wallet'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get wallet by user ID
+      tags:
+      - wallets
+  /wallets/deposit:
+    post:
+      consumes:
+      - application/json
+      description: Adds a specified amount of balance to the wallet identified by
+        WalletID.
+      parameters:
+      - description: Balance Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.BalanceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated wallet information
+          schema:
+            $ref: '#/definitions/models.Wallet'
+        "400":
+          description: Invalid input data or request body
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Deposit some amount to wallet
+      tags:
+      - wallets
+  /wallets/withdraw:
+    post:
+      consumes:
+      - application/json
+      description: Withdraws a specified amount from the wallet identified by WalletID.
+      parameters:
+      - description: Balance Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.BalanceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wallet with updated balance
+          schema:
+            $ref: '#/definitions/models.Wallet'
+        "400":
+          description: Invalid input data or request body
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Withdraw balance from wallet
+      tags:
+      - wallets
 swagger: "2.0"

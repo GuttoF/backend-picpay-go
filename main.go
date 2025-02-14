@@ -33,9 +33,16 @@ func main() {
 	app := fiber.New()
 
 
-	// routes here
+	// Routes here
 	app.Post("/users", handlers.CreateUser)
-	app.Post("/transaction", handlers.Transfer)
+	app.Post("/transactions", handlers.Transfer)
+	app.Post("/wallets", handlers.CreateWalletHandler)
+	app.Post("/wallets/deposit", handlers.DepositHandler)
+	app.Post("/wallets/withdraw", handlers.WithdrawHandler)
+
+	app.Get("/wallets/:user_id", handlers.GetWalletByUserIDHandler)
+
+	// Swagger documentation
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 	port := os.Getenv("PORT")
