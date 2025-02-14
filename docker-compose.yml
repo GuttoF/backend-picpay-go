@@ -12,7 +12,7 @@ services:
     command: >
       bash -c '
       go install github.com/air-verse/air@latest
-      && air --build.cmd "go build -o tmp/api cmd/main.go" --build.bin "./tmp/api"
+      && air --build.cmd "go build -o tmp/api main.go" --build.bin "./tmp/api"
       '
 
   db:

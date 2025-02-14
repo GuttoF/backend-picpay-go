@@ -6,6 +6,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// CreateUser handles the creation of a new user.
+// @Summary Create a new user
+// @Description Create a new user with the provided email and password
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body models.User true "User data"
+// @Success 201 {object} models.User
+// @Failure 400 {object} models.ErrorResponse "Cannot parse JSON or missing email/password"
+// @Router /users [post]
 func CreateUser(c *fiber.Ctx) error {
 	var user models.User
 

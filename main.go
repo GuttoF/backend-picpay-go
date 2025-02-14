@@ -6,10 +6,17 @@ import (
 	"backend-picpay/internal/handlers"
 	"backend-picpay/internal/models"
 	"backend-picpay/internal/utils"
-
+	_ "backend-picpay/docs"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 	"github.com/gofiber/fiber/v2"
 )
 
+// main is the entry point of the application. It connects to the database,
+// performs database migrations, sets up the Fiber web server with routes,
+// and starts the server on the specified port. If the PORT environment
+// variable is not set, it defaults to port 3000. The application includes
+// routes for creating users, transferring transactions, and serving Swagger
+// documentation.
 func main() {
 	db := utils.ConnectDB()
 	if db == nil {
@@ -25,8 +32,11 @@ func main() {
 
 	app := fiber.New()
 
+
+	// routes here
 	app.Post("/users", handlers.CreateUser)
-	app.Post("/transactions", handlers.Transfer)
+	app.Post("/transaction", handlers.Transfer)
+	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {

@@ -1,0 +1,92 @@
+definitions:
+  models.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  models.Transaction:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      payeeID:
+        type: string
+      payerID:
+        type: string
+      value:
+        type: number
+    type: object
+  models.User:
+    properties:
+      createdAt:
+        type: string
+      document:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      userType:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /transaction:
+    post:
+      consumes:
+      - application/json
+      description: Transfers a specified amount from the payer to the payee
+      parameters:
+      - description: Transaction details
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/models.Transaction'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Transaction'
+        "400":
+          description: Invalid input or transfer error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Transfer funds between users
+      tags:
+      - transactions
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided email and password
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Cannot parse JSON or missing email/password
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Create a new user
+      tags:
+      - users
+swagger: "2.0"

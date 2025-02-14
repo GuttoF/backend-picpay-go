@@ -6,10 +6,10 @@ COPY go.mod go.sum ./
 
 RUN go mod tidy
 
-COPY cmd/ cmd/
+COPY . .
 COPY internal/ internal/
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/api cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/api main.go
 
 ###############################################
 FROM alpine:3.20
