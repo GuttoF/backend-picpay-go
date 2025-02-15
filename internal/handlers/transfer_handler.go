@@ -10,16 +10,16 @@ import (
 // Transfer handles the transfer of funds between two users.
 // @Summary Transfer funds between users
 // @Description Transfers a specified amount from the payer to the payee
-// @Tags transferss
+// @Tags transfer
 // @Accept json
 // @Produce json
-// @Param transfer body models.Transfer true "Transaction details"
-// @Success 201 {object} models.Transfer
+// @Param transfer body models.Transaction true "Transaction details"
+// @Success 201 {object} models.Transaction
 // @Failure 400 {object} models.ErrorResponse "Invalid input or transfer error"
-// @Router /transfers [post]
+// @Router /transfer [post]
 func TransferHandler(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var transaction models.Transfer
+		var transaction models.Transaction
 
 		if err := c.BodyParser(&transaction); err != nil {
 			return c.Status(400).JSON(models.ErrorResponse{Error: "Cannot parse JSON"})

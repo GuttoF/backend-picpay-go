@@ -21,7 +21,7 @@ func main() {
 	utils.ConnectDB()
 	db := utils.GetDB()
 
-	if err := db.AutoMigrate(&models.User{}, &models.Wallet{}, &models.Transfer{}, &models.Notification{}); err != nil {
+	if err := db.AutoMigrate(&models.User{}, &models.Wallet{}, &models.Transaction{}, &models.Notification{}); err != nil {
 		log.Fatalf("Database migration failed: %v", err)
 	}
 	log.Println("Database migration completed successfully")
@@ -31,7 +31,7 @@ func main() {
 	//API routes
 	log.Println("Setting up API routes...")
 	app.Post("/users", handlers.CreateUserHandler(db))
-	app.Post("/transfers", handlers.TransferHandler(db))
+	app.Post("/transfer", handlers.TransferHandler(db))
 	app.Post("/wallets", handlers.CreateWalletHandler(db))
 	app.Post("/wallets/deposit", handlers.DepositHandler(db))
 	app.Post("/wallets/withdraw", handlers.WithdrawHandler(db))

@@ -7,7 +7,7 @@ import (
     "net/http"
 )
 
-func Transfer(db *gorm.DB, transaction *models.Transfer) error {
+func Transfer(db *gorm.DB, transaction *models.Transaction) error {
     tx := db.Begin()
     if tx.Error != nil {
         return tx.Error
