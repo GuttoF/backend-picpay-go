@@ -5,6 +5,7 @@ import (
     "errors"
     "github.com/google/uuid"
     "gorm.io/gorm"
+    "log"
 )
 
 func CreateWallet(db *gorm.DB, userID uuid.UUID) (*models.Wallet, error) {
@@ -57,30 +58,27 @@ func Withdraw(db *gorm.DB, walletID uuid.UUID, amount float64) (*models.Wallet, 
         return nil, errors.New("withdrawal amount must be greater than zero")
     }
 
-    tx := db.Begin()
-    if tx.Error != nil {
-        return nil, tx.Error
-    }
-
     var wallet models.Wallet
-    if err := tx.Where("id = ?", walletID).First(&wallet).Error; err != nil {
-        tx.Rollback()
-        return nil, errors.New("wallet not found")
-    }
 
-    if wallet.Balance < amount {
-        tx.Rollback()
-        return nil, errors.New("insufficient balance")
-    }
+    err := db.Transaction(func(tx *gorm.DB) error {
+        if err := tx.Raw("SELECT * FROM wallets WHERE id = ? FOR UPDATE", walletID).Scan(&wallet).Error; err != nil {
+            return errors.New("wallet not found")
+        }
 
-    wallet.Balance -= amount
+        if wallet.Balance < amount {
+            return errors.New("insufficient balance")
+        }
 
-    if err := tx.Save(&wallet).Error; err != nil {
-        tx.Rollback()
-        return nil, err
-    }
+        wallet.Balance -= amount
+        if err := tx.Save(&wallet).Error; err != nil {
+            return err
+        }
 
-    if err := tx.Commit().Error; err != nil {
+        log.Printf("Withdrawal successful: WalletID: %s, Amount: %.2f", walletID, amount)
+        return nil
+    })
+
+    if err != nil {
         return nil, err
     }
 
