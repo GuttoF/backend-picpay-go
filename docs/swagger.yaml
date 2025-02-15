@@ -14,7 +14,7 @@ definitions:
       error:
         type: string
     type: object
-  models.Transaction:
+  models.Transfer:
     properties:
       createdAt:
         type: string
@@ -58,7 +58,7 @@ definitions:
 info:
   contact: {}
 paths:
-  /transactions:
+  /transfers:
     post:
       consumes:
       - application/json
@@ -66,24 +66,24 @@ paths:
       parameters:
       - description: Transaction details
         in: body
-        name: transaction
+        name: transfer
         required: true
         schema:
-          $ref: '#/definitions/models.Transaction'
+          $ref: '#/definitions/models.Transfer'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Transaction'
+            $ref: '#/definitions/models.Transfer'
         "400":
           description: Invalid input or transfer error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Transfer funds between users
       tags:
-      - transactions
+      - transferss
   /users:
     post:
       consumes:
@@ -192,9 +192,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Withdraws a specified amount from the wallet identified by WalletID.
+      description: Withdraw a specified amount from a wallet
       parameters:
-      - description: Balance Request
+      - description: Withdrawal request body
         in: body
         name: request
         required: true
@@ -204,14 +204,14 @@ paths:
       - application/json
       responses:
         "200":
-          description: Wallet with updated balance
+          description: Updated wallet after withdrawal
           schema:
             $ref: '#/definitions/models.Wallet'
         "400":
           description: Invalid input data or request body
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      summary: Withdraw balance from wallet
+      summary: Withdraw from wallet
       tags:
       - wallets
 swagger: "2.0"

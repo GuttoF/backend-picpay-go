@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/transactions": {
+        "/transfers": {
             "post": {
                 "description": "Transfers a specified amount from the payer to the payee",
                 "consumes": [
@@ -25,17 +25,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "transactions"
+                    "transferss"
                 ],
                 "summary": "Transfer funds between users",
                 "parameters": [
                     {
                         "description": "Transaction details",
-                        "name": "transaction",
+                        "name": "transfer",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Transaction"
+                            "$ref": "#/definitions/models.Transfer"
                         }
                     }
                 ],
@@ -43,7 +43,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Transaction"
+                            "$ref": "#/definitions/models.Transfer"
                         }
                     },
                     "400": {
@@ -177,7 +177,7 @@ const docTemplate = `{
         },
         "/wallets/withdraw": {
             "post": {
-                "description": "Withdraws a specified amount from the wallet identified by WalletID.",
+                "description": "Withdraw a specified amount from a wallet",
                 "consumes": [
                     "application/json"
                 ],
@@ -187,10 +187,10 @@ const docTemplate = `{
                 "tags": [
                     "wallets"
                 ],
-                "summary": "Withdraw balance from wallet",
+                "summary": "Withdraw from wallet",
                 "parameters": [
                     {
-                        "description": "Balance Request",
+                        "description": "Withdrawal request body",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -201,7 +201,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Wallet with updated balance",
+                        "description": "Updated wallet after withdrawal",
                         "schema": {
                             "$ref": "#/definitions/models.Wallet"
                         }
@@ -278,7 +278,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Transaction": {
+        "models.Transfer": {
             "type": "object",
             "properties": {
                 "createdAt": {

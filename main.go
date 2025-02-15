@@ -18,37 +18,33 @@ import (
 // routes for creating users, transferring transactions, and serving Swagger
 // documentation.
 func main() {
-	db := utils.ConnectDB()
-	if db == nil {
-		log.Fatalf("Failed to connect to database")
-	}
+	utils.ConnectDB()
+	db := utils.GetDB()
 
-	err := db.AutoMigrate(&models.User{}, &models.Wallet{}, &models.Transaction{}, &models.Notification{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database:  %v", err)
+	if err := db.AutoMigrate(&models.User{}, &models.Wallet{}, &models.Transfer{}, &models.Notification{}); err != nil {
+		log.Fatalf("Database migration failed: %v", err)
 	}
-
-	log.Println("Database migration completed succesfully")
+	log.Println("Database migration completed successfully")
 
 	app := fiber.New()
 
-
-	// Routes here
-	app.Post("/users", handlers.CreateUser)
-	app.Post("/transactions", handlers.Transfer)
-	app.Post("/wallets", handlers.CreateWalletHandler)
-	app.Post("/wallets/deposit", handlers.DepositHandler)
-	app.Post("/wallets/withdraw", handlers.WithdrawHandler)
-
-	app.Get("/wallets/:user_id", handlers.GetWalletByUserIDHandler)
+	//API routes
+	log.Println("Setting up API routes...")
+	app.Post("/users", handlers.CreateUserHandler(db))
+	app.Post("/transfers", handlers.TransferHandler(db))
+	app.Post("/wallets", handlers.CreateWalletHandler(db))
+	app.Post("/wallets/deposit", handlers.DepositHandler(db))
+	app.Post("/wallets/withdraw", handlers.WithdrawHandler(db))
+	app.Get("/wallets/:user_id", handlers.GetWalletByUserIDHandler(db))
 
 	// Swagger documentation
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000" 
+		port = "3000"
 	}
+
 	log.Printf("Server is running on port %s", port)
 	log.Fatal(app.Listen(":" + port))
 }

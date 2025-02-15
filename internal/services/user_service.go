@@ -2,15 +2,12 @@ package services
 
 import (
     "backend-picpay/internal/models"
-    "backend-picpay/internal/utils"
+    "gorm.io/gorm"
 )
 
-func CreateUser(user *models.User) error {
-    db := utils.ConnectDB()
-
+func CreateUser(db *gorm.DB, user *models.User) error {
     if err := db.Create(user).Error; err != nil {
         return err
     }
-
     return nil
 }

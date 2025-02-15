@@ -1,36 +1,52 @@
 package utils
 
 import (
-    "os"
+    "fmt"
     "log"
+    "os"
+    "sync"
 
-	"gorm.io/gorm"
-	"gorm.io/driver/postgres"
     "github.com/joho/godotenv"
+    "gorm.io/driver/postgres"
+    "gorm.io/gorm"
 )
 
-func ConnectDB() *gorm.DB {
-    err := godotenv.Load()
-    if err != nil {
-        log.Println("Error loading .env file:", err)
-        return nil
+var (
+    DB   *gorm.DB
+    once sync.Once
+)
+
+func ConnectDB() {
+    once.Do(func() {
+        if err := godotenv.Load(); err != nil {
+            log.Println("Warning: .env file not found, using system environment variables")
+        }
+
+        dbHost := os.Getenv("POSTGRES_HOST")
+        dbPort := os.Getenv("POSTGRES_PORT")
+        dbUser := os.Getenv("POSTGRES_USER")
+        dbPassword := os.Getenv("POSTGRES_PASSWORD")
+        dbName := os.Getenv("POSTGRES_DB")
+        sslMode := os.Getenv("POSTGRES_SSLMODE")
+
+        dsn := fmt.Sprintf(
+            "host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+            dbHost, dbPort, dbUser, dbPassword, dbName, sslMode,
+        )
+
+        var err error
+        DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+        if err != nil {
+            log.Fatal("Error connecting to database:", err)
+        }
+
+        log.Println("Database connection established successfully")
+    })
+}
+
+func GetDB() *gorm.DB {
+    if DB == nil {
+        log.Fatal("Database is not initialized. Call ConnectDB() first.")
     }
-
-    dbHost := os.Getenv("POSTGRES_HOST")
-    dbPort := os.Getenv("POSTGRES_PORT")
-    dbUser := os.Getenv("POSTGRES_USER")
-    dbPassword := os.Getenv("POSTGRES_PASSWORD")
-    dbName := os.Getenv("POSTGRES_DB")
-    sslMode := os.Getenv("POSTGRES_SSLMODE")
-
-    dsn := "host=" + dbHost + " port=" + dbPort + " user=" + dbUser +
-        " password=" + dbPassword + " dbname=" + dbName + " sslmode=" + sslMode
-
-    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-    if err != nil {
-        log.Println("Error connecting to database:", err)
-        return nil
-    }
-
-    return db
+    return DB
 }
